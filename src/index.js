@@ -19,33 +19,38 @@ async function bodyParser(req, res, next, options) {
       chunks.push(data);
     });
     req.on('end', () => {
-      const buffer = Buffer.concat(chunks);
-      const body = buffer.toString('utf-8');
-      if (options.limit && buffer.length > options.limit*1000) {
-        return next(new Error('Request body exceeded limit'));
+      try {
+        const buffer = Buffer.concat(chunks);
+        const body = buffer.toString('utf-8');
+        if (options.limit && buffer.length > options.limit * 1000) {
+          return next(new Error('Request body exceeded limit'));
+        }
+        if (options.shouldSaveRawBody) {
+          req.rawBody = body;
+        }
+        if (req.headers['content-type'] === 'application/json') {
+          req.body = JSON.parse(body);
+        } else if (req.headers['content-type'] === 'application/x-www-form-urlencoded') {
+          req.body = url.parse(`http://JAI.com/?${body}`, true).query;
+          Object.keys(req.body).forEach((key) => {
+            if (options.parseNumbers && !isNaN(Number(req.body[key]))) {
+              req.body[key] = Number(req.body[key]);
+            }
+          })
+        } else {
+          req.body = body;
+        }
+        resolve();
+      } catch (error) {
+        reject(error);
       }
-      if (options.shouldSaveRawBody) {
-        req.rawBody = body;
-      }
-      if (req.headers['content-type'] === 'application/json') {
-        req.body = JSON.parse(body);
-      } else if (req.headers['content-type'] === 'application/x-www-form-urlencoded') {
-        req.body = url.parse(`http://JAI.com/?${body}`, true).query;
-      } else {
-        req.body = body;
-      }
-      resolve();
     });
   });
   return next();
 }
 
 function builder(options = {}) {
-  return (req, res, next) => {
-    try {
-      bodyParser(req, res, next, { ...defaultOptions, ...options });
-    } catch (error) { next(error); }
-  };
+  return async (req, res, next) => await bodyParser(req, res, next, { ...defaultOptions, ...options });
 }
 
 module.exports = builder;

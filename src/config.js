@@ -12,6 +12,7 @@ const defaultOptions = {
   shouldSaveRawBody: false,
   allowedMethods: eligibleMethods,
   allowedContentTypes: contentTypes,
+  parseNumbers: true,
 };
 
 module.exports = defaultOptions;
