@@ -1,9 +1,11 @@
 # Jai Body Parser
 Simple and fast Node.js module for parsing Http request body. Part of Jai.js ecosystem. Built without any third part dependency.
+Jai body parser is a middleware for node.js that parses incoming request body in a middleware before your application’s request handlers are called.
+Allowed content-types  'application/x-www-form-urlencoded', 'text/plain', 'application/json', 'application/javascript','application/xml'.
 
 ---
 [![Twitter Follow](https://img.shields.io/twitter/follow/Harpalsingh_11?label=Follow)](https://twitter.com/intent/follow?screen_name=Harpalsingh_11)
-[![Linkedin: Harpal Singh](https://img.shields.io/badge/-harpalsingh11-blue?style=flat-square&logo=Linkedin&logoColor=white&link=https://www.linkedin.com/in/harpalsingh11)](https://www.linkedin.com/in/harpalsingh11/)
+[![Linkedin: Harpal Singh](https://img.shields.io/badge/-harpalsingh11-blue?style=flat-square&logo=Linkedin&logoColor=white&link=https://www.linkedin.com/in/harpalsingh11)](https://www.linkedin.com/in/hsk11/)
 [![GitHub followers](https://img.shields.io/github/followers/hsk11?label=Follow&style=social)](https://github.com/hsk11)
 ---
 
@@ -31,6 +33,25 @@ Install my-project with npm
 ### Usage / Examples
 
 ```javascript
+// JAI SERVER
+
+const jaiServer = require('jai-server');
+const jaiBodyParser = require('jai-body-parser');
+
+const app = jaiServer();
+const port = 1111;
+app.use(jaiBodyParser(/* options */));
+app.post('*', (req, res) => {
+  res.writeHead(200, { 'Content-Type': 'application/json' });
+  res.end(JSON.stringify({ body: req.body }));
+});
+
+
+app.listen(port, () => {
+  console.log(`Server listening on http://localhost:${port}/ ...`);
+});
+
+
 // Express
 
 const express = require('express');
@@ -81,6 +102,7 @@ server.listen(1111, () => {
     shouldSaveRawBody: false,
     allowedMethods: eligibleMethods,
     allowedContentTypes: contentTypes,
+    parseNumbers: true
     }
  */
 
@@ -89,6 +111,8 @@ server.listen(1111, () => {
 | `limit` | `integer` |  size in kb, default: 100 (100kb)|
 | `shouldSaveRawBody` | `boolean` | should save raw body, default: false. useful when authenticating webhook responses|
 | `allowedMethods` | `array` |  array of allowed http methods, default: ['post', 'put', 'patch']|
-| `allowedContentTypes` | `array` |  array of allowed http methods, default: ['application/x-www-form-urlencoded' 'text/plain', 'application/json', 'application/javascript', 'application/xml']|
+| `allowedContentTypes` | `array` |  array of allowed http methods, default: ['application/x-www-form-urlencoded' 'text/plain',
+'application/json', 'application/javascript', 'application/xml']|
+| `parseNumbers` | `boolean` |  parse numbers from body text, default: true, 
 
 
