@@ -9,9 +9,13 @@ const defaultOptions = require('./config');
  */
 
 async function bodyParser(req, res, next, options) {
+
+  if (global.jaiBodyParserCompleted) { return next(); } // ensures that the middleware is not executed multiple times
   if (!options.allowedMethods.includes(req.method.toLowerCase()) || !req.headers['content-type'] || !options.allowedContentTypes.includes(req.headers['content-type'].toLowerCase())) {
+
     return next();
   }
+
   const chunks = [];
   await new Promise((resolve, reject) => {
     req.on('error', reject);
@@ -19,6 +23,7 @@ async function bodyParser(req, res, next, options) {
       chunks.push(data);
     });
     req.on('end', () => {
+      global.jaiBodyParserCompleted = true;
       try {
         const buffer = Buffer.concat(chunks);
         const body = buffer.toString('utf-8');
