@@ -23,7 +23,7 @@
     "http request handler",
     "http request body handler",
     "http request body middleware",
-    "http request body parser middleware",
+    "http request body parser middleware"
   ],
   "main": "./src/index.js",
   "scripts": {
