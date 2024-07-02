@@ -1,8 +1,5 @@
 name: Publish package to GitHub Packages
-on: 
-  pull_request:
-    types:
-      - closed
+on: push
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -10,12 +7,9 @@ jobs:
       contents: read
       packages: write
     if:
-        (contains('
+        contains('
           refs/heads/master
-        ', github.ref) || contains('
-        refs/heads/main
-      ', github.ref) )&&  github.event.pull_request.merged == true
-
+        ', github.ref)
     steps:
       - uses: actions/checkout@v4
       # Setup .npmrc file to publish to GitHub Packages
