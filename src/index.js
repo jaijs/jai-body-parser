@@ -11,11 +11,9 @@ const defaultOptions = require('./config');
 async function bodyParser(req, res, next, options) {
 
   if (global.jaiBodyParserCompleted) { return next(); } // ensures that the middleware is not executed multiple times
-  if (!options.allowedMethods.includes(req.method.toLowerCase()) || !req.headers['content-type'] || !options.allowedContentTypes.includes(req.headers['content-type'].toLowerCase())) {
-
+  if (!options.allowedMethods.includes(req.method.toUpperCase()) || !req.headers['content-type'] || !options.allowedContentTypes.includes(req.headers['content-type'].toLowerCase())) {
     return next();
   }
-
   const chunks = [];
   await new Promise((resolve, reject) => {
     req.on('error', reject);
@@ -23,8 +21,8 @@ async function bodyParser(req, res, next, options) {
       chunks.push(data);
     });
     req.on('end', () => {
-      global.jaiBodyParserCompleted = true;
       try {
+        global.jaiBodyParserCompleted = true;
         const buffer = Buffer.concat(chunks);
         const body = buffer.toString('utf-8');
         if (options.limit && buffer.length > options.limit * 1000) {
@@ -36,7 +34,7 @@ async function bodyParser(req, res, next, options) {
         if (req.headers['content-type'] === 'application/json') {
           req.body = JSON.parse(body);
         } else if (req.headers['content-type'] === 'application/x-www-form-urlencoded') {
-          req.body = url.parse(`http://JAI.com/?${body}`, true).query;
+          req.body = url.parse(`http://JaiJs.org/?${body}`, true).query;
           Object.keys(req.body).forEach((key) => {
             if (options.parseNumbers && !isNaN(Number(req.body[key]))) {
               req.body[key] = Number(req.body[key]);
@@ -55,7 +53,9 @@ async function bodyParser(req, res, next, options) {
 }
 
 function builder(options = {}) {
-  return async (req, res, next) => await bodyParser(req, res, next, { ...defaultOptions, ...options });
+  options = { ...defaultOptions, ...options };
+  options.allowedMethods = options.allowedMethods.map((method) => method.toUpperCase());
+  return async (req, res, next) => await bodyParser(req, res, next, options);
 }
 
 module.exports = builder;

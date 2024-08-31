@@ -8,7 +8,7 @@ const contentTypes = [
   'application/xml'];
 
 const defaultOptions = {
-  limit: 100, // in kb
+  limit: 11111, // in kb
   shouldSaveRawBody: false,
   allowedMethods: eligibleMethods,
   allowedContentTypes: contentTypes,
