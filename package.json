@@ -1,6 +1,6 @@
 {
   "name": "jai-body-parser",
-  "version": "1.1.41",
+  "version": "1.1.45",
   "description": "Powerful Node.js module/package for parsing request body",
   "keywords": [
     "body parser",

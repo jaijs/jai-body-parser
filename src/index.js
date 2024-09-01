@@ -10,7 +10,7 @@ const defaultOptions = require('./config');
 
 async function bodyParser(req, res, next, options) {
 
-  if (global.jaiBodyParserCompleted) { return next(); } // ensures that the middleware is not executed multiple times
+  if(req.JaiParser) next();
   if (!options.allowedMethods.includes(req.method.toUpperCase()) || !req.headers['content-type'] || !options.allowedContentTypes.includes(req.headers['content-type'].toLowerCase())) {
     return next();
   }
@@ -22,7 +22,7 @@ async function bodyParser(req, res, next, options) {
     });
     req.on('end', () => {
       try {
-        global.jaiBodyParserCompleted = true;
+        req.JaiParser=true;
         const buffer = Buffer.concat(chunks);
         const body = buffer.toString('utf-8');
         if (options.limit && buffer.length > options.limit * 1000) {
